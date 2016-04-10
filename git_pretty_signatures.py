@@ -154,7 +154,12 @@ if __name__ == "__main__":
 
         com = "git log -1 "+com_hash+" --pretty=format:\"%C(yellow)%H%C(auto)%d\n"
         sig_info_com = "git log "+com_hash+" -1 --pretty=format:\"%GG\""
-        sig_info = check_output(sig_info_com.split())
+
+        if (sys.version_info > (3, 0)):
+            sig_info = check_output(sig_info_com.split()).decode(encoding)
+        else:
+            sig_info = check_output(sig_info_com.split())
+
         sig_info = repr(sig_info).replace('"','\\"')[2:-2]
         sig_info = sig_info.replace('\\n','\n')
         if sig_stat == 'G':
