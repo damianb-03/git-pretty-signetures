@@ -154,7 +154,10 @@ def buffor_popleft_all(buffor):
 
 def buffor_popleft_singly(buffor):
     while buffor:
-        print(buffor.popleft())
+        try:
+            print(buffor.popleft())
+        except:
+            exit(0)     # catch exit from less
 
 if __name__ == "__main__":
 
@@ -203,7 +206,6 @@ if __name__ == "__main__":
                 buffor_popleft_n(buffor,terminal_height)
 
             buffor_popleft_singly(buffor)
-
             break     # end of commits success exit
 
         del_pos = data.find(':')
