@@ -124,7 +124,7 @@ def totag_stats(pager, encoding, check_mode=False):
 						+ col_coms + str(G_totag) + ": GOOD\n"      \
 						+ col_coms+str(U_totag) + ": UNTRUSTED\n"   \
 						+ col_coms+str(B_totag) + ": BAD SIGN\n"    \
-						+ col_coms+str(N_totag) + ": NOT SIGNED\n"  \
+						+ col_coms+str(N_totag) + ": NOT SIGNED (or can not check signature)\n"  \
 						+ col_coms+info_ft+col_end + '\n'
 			pager.stdin.write(info_str.encode(encoding))
 			return
