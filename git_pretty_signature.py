@@ -4,7 +4,6 @@ import argparse
 from subprocess import check_output, call, Popen, PIPE, CalledProcessError, STDOUT
 import locale
 
-
 class BColors:
 
 	def __init__(self):
@@ -186,43 +185,60 @@ if __name__ == "__main__":
 
 			tag_pos = ref_info.find("tag")
 			# getting tag from %d ref names
+			tag_table = ""
 			if tag_pos != -1:
 				tag_info = ref_info[tag_pos:-1]
 				tag_end_pos = tag_info.find(',')
 				tag_info = tag_info[:tag_end_pos]
 				info_len = len(com_hash) + len(ref_info) - 2
 				info_len_cor = info_len - len(tag_info) - 13
-				com += "%C(yellow reverse)" + '='*info_len + '\n'
-				com += "%C(yellow reverse)===%C(reset)%C(yellow) " + tag_info + " is here "		\
-					+ "%C(yellow reverse)" + '='*info_len_cor + '\n'
+
+				tag_table = "%C(yellow reverse)" + '='*info_len + '\n'
+				tag_table += "%C(yellow reverse)===%C(reset)%C(yellow) " + tag_info + " is here "
+				tag_table += "%C(yellow reverse)" + '='*info_len_cor + '\n'
 
 				tag = tag_info[5:]		# 5 - for skip "tag: "
 				tag_verbouse_com = "git tag -v " + tag
+
+				# git throw exception when tag have
+				# no detailed info
 				try:
-					tag_verbouse = check_output(tag_verbouse_com.split()).decode(encoding)
-				except CalledProcessError:
-					tag_verbouse = "short tag - no detailed information\n"	# git throw exception when tog have not details info
+					tag_verbouse = check_output(tag_verbouse_com.split(), stderr=STDOUT, universal_newlines=True)
+							#
+							#									shell=True,
+							#					timeout=3,
 
-				com += "%C(yellow reverse)==%C(reset)%C(yellow) info:\n"
-				com += "%C(yellow reverse)=%C(reset)%C(yellow) "
-				com += tag_verbouse.replace('\n', '\n%C(yellow reverse)=%C(reset)%C(yellow) ')
-				#print(repr(tag_verbouse))
+				except CalledProcessError as err:
+					tag_verbouse = "short tag - no detailed information\n"
+					# tag_verbouse += err.output    # output from stderr
 
-				com += "\b%C(yellow reverse)" + '='*(info_len-1) + '\n'
+				tag_table += "%C(yellow reverse)==%C(reset)%C(yellow) info:\n"
+				tag_table += "%C(yellow reverse)=%C(reset)%C(yellow) "
+				tag_table += tag_verbouse.replace('\n', '\n%C(yellow reverse)=%C(reset)%C(yellow) ')
+
+				tag_table += "\b%C(yellow reverse)" + '='*(info_len-1) + '\n'
 
 			sig_info = repr(sig_info).replace('"', '\\"')[2:-2]
 			sig_info = sig_info.replace('\\n', '\n')
 			sig_info = sig_info.replace('\\\"', '\"')
 			if sig_stat == 'G':
+				tag_table = tag_table.replace('gpg', '%C(green)SIGNATURE - GOOD\n%C(reverse yellow)=%C(reset) gpg', 1)
+				com += tag_table.replace('gpg:', '%C(green)gpg:')
 				com += "%C(green)SIGNATURE - GOOD\n%C(green)"
 				com += sig_info.replace('\n', '\n%C(green)')[1:-1]
 			elif sig_stat == 'U':
+				tag_table = tag_table.replace('gpg', '%C(cyan)SIGNATURE - UNTRUSTED\n%C(reverse yellow)=%C(reset) gpg', 1)
+				com += tag_table.replace('gpg:', '%C(cyan)gpg:')
 				com += "%C(cyan)SIGNATURE - UNTRUSTED\n%C(cyan)"
 				com += sig_info.replace('\n', '\n%C(cyan)')[1:-1]
 			elif sig_stat == 'B':
+				tag_table = tag_table.replace('gpg', '%C(magneta)SIGNATURE - BAD\n%C(reverse yellow)=%C(reset) gpg', 1)
+				com += tag_table.replace('gpg:', '%C(magneta)gpg:')
 				com += "%C(magneta reverse)SIGNATURE - BAD SIGN\n%C(magneta reverse)"
 				com += sig_info.replace('\n', '\n%C(magneta)')[1:-1]
 			elif sig_stat == 'N':
+				tag_table = tag_table.replace('gpg', '%C(red)SIGNATURE - GOOD\n%C(reverse yellow)=%C(reset) gpg', 1)
+				com += tag_table.replace('gpg:', '%C(red)gpg:')
 				com += '%C(red reverse)! !!! ! WARNING ! !!! !\n' 		\
 					+ '%C(red)! SIGNATURE - FAILURE !\n' 				\
 					+ '%C(red reverse)! !!! ! WARNING ! !!! !\n' 		\
