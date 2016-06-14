@@ -75,8 +75,8 @@ def totag_stats(pager, encoding, check_mode=False):
 				hash_com = 'git log -1 --skip='+str(mainloop_count)+' --pretty=format:"%H"'
 				try:
 					commit_hash = check_output(hash_com.split()).decode(encoding)
-					pager.stdin.write(commit_hash.encode(encoding))
-				except CalledProcessError as err:
+					# pager.stdin.write(commit_hash.encode(encoding))  # dbg
+				except CalledProcessError:
 					pass
 				if not commit_point_to_tag(commit_hash[1: -1]):
 					mainloop_count += 1
@@ -145,9 +145,9 @@ def totag_stats(pager, encoding, check_mode=False):
 				info_head = col_coms+"Signatures status for all commits:\n"
 				info_ft = BColors.OKBLUE + "NOTICE: No tag found in this repository\n"
 
-			info_head = "\n\n\n" + "Warning: (bug#m145) check if no branches, remotes (refnames) contain word 'tag' otherwise "\
-						+ "this parsing can be not accurate and could show not correct stats. Also read the log yourself "\
-						+ " to make sure.\n\n" + info_head
+			# info_head = "\n\n\n" + "Warning: (bug#m145) check if no branches, remotes (refnames) contain word 'tag' otherwise "\
+			#			+ "this parsing can be not accurate and could show not correct stats. Also read the log yourself "\
+			#			+ " to make sure.\n\n" + info_head
 
 			info_str = info_head                                    \
 						+ col_coms + str(G_totag) + ": GOOD\n"      \
@@ -165,7 +165,7 @@ def is_tag(tag_name):
 	try:
 		check_call(['git', 'describe', '--tags', tag_name], stderr=STDOUT, stdout=open(os.devnull, 'w'))
 		return True
-	except Exception as e:
+	except CalledProcessError:
 		return False
 
 
@@ -175,8 +175,7 @@ def commit_point_to_tag(commit_hash):
 	try:
 		check_call(['git', 'describe', '--exact-match', commit_hash], stderr=STDOUT, stdout=open(os.devnull, 'w'))
 		return True
-	except Exception as e:
-		print ("catch expect")
+	except CalledProcessError:
 		return False
 
 
@@ -222,7 +221,7 @@ if __name__ == "__main__":
 			com_hash = data[1:del_pos]
 			sig_stat = data[del_pos+1:del_pos+2]
 
-			com = "git||log||-1||"+com_hash+"||--pretty=format:\"%C(yellow)%H%C(auto)%d\n"
+			com = "git||log||-1||"+com_hash+"||--pretty=format:\"%C(yellow)commit: %H%C(auto)%d\n"
 			sig_info = ""
 			ref_info = ""
 			sig_info_com = "git log "+com_hash+" -1 --pretty=format:\"%GG\""
