@@ -289,7 +289,7 @@ if __name__ == "__main__":
 				com += "%C(magneta reverse)SIGNATURE - BAD SIGN\n%C(magneta reverse)"
 				com += sig_info.replace('\n', '\n%C(magneta)')[1:-1]
 			elif sig_stat == 'N':
-				tag_table = tag_table.replace('gpg', '%C(red)SIGNATURE - GOOD\n%C(reverse yellow)=%C(reset) gpg', 1)
+				tag_table = tag_table.replace('gpg', '%C(red)SIGNATURE - FAIL\n%C(reverse yellow)=%C(reset) gpg', 1)
 				com += tag_table.replace('gpg:', '%C(red)gpg:')
 				com += '%C(red reverse)! !!! ! WARNING ! !!! !\n' 		\
 					+ '%C(red)! SIGNATURE - FAILURE !\n' 				\
