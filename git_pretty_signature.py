@@ -145,9 +145,7 @@ def totag_stats(pager, encoding, check_mode=False):
 				info_head = col_coms+"Signatures status for all commits:\n"
 				info_ft = BColors.OKBLUE + "NOTICE: No tag found in this repository\n"
 
-			# info_head = "\n\n\n" + "Warning: (bug#m145) check if no branches, remotes (refnames) contain word 'tag' otherwise "\
-			#			+ "this parsing can be not accurate and could show not correct stats. Also read the log yourself "\
-			#			+ " to make sure.\n\n" + info_head
+			info_head = "\n\n\n" + "Warning: not all git system calls are fully escaped yet. Do not use on important production accounts yet\n\n"
 
 			info_str = info_head                                    \
 						+ col_coms + str(G_totag) + ": GOOD\n"      \
@@ -163,7 +161,7 @@ def totag_stats(pager, encoding, check_mode=False):
 # include unannotated tags !
 def is_tag(tag_name):
 	try:
-		check_call(['git', 'describe', '--tags', tag_name], stderr=STDOUT, stdout=open(os.devnull, 'w'))
+		check_call(['git', 'describe', '--tags', '--', tag_name], stderr=STDOUT, stdout=open(os.devnull, 'w'))
 		return True
 	except CalledProcessError:
 		return False
@@ -173,15 +171,15 @@ def is_tag(tag_name):
 # False otherwise
 def commit_point_to_tag(commit_hash):
 	try:
-		check_call(['git', 'describe', '--exact-match', commit_hash], stderr=STDOUT, stdout=open(os.devnull, 'w'))
+		check_call(['git', 'describe', '--exact-match', '--', commit_hash], stderr=STDOUT, stdout=open(os.devnull, 'w'))
 		return True
 	except CalledProcessError:
 		return False
 
 
 # quick test is git working here, is this git working directory:
-def is_git_directory(path='.'):
-	return call(['git', '-C', path, 'branch'], stderr=STDOUT, stdout=open(os.devnull, 'w')) == 0
+def is_git_directory():
+	return call(['git', '-C', '.', 'branch'], stderr=STDOUT, stdout=open(os.devnull, 'w')) == 0
 
 if __name__ == "__main__":
 
