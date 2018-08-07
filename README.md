@@ -2,8 +2,12 @@
 
 Extension for 'git log' including pretty printing of gpg signatures in commits and tags.
 
+## Example Output
+
+![example_output](/img/example_output.png)
+
 ## Usage
-``` bash
+```
 $ python3 git_pretty_signature.py --help
 usage: git_pretty_signature.py [-h] [-c]
 
@@ -16,6 +20,16 @@ optional arguments:
 
 ```
 
-## Example Output
+### .bashrc
 
-![example_output](/img/example_output.png)
+*Script can be used from the location of any git repository. For convenient use, a script call can be added to the .bashrc file.*
+*Example .bashrc code:*
+
+```bash
+git() {
+	if [ "$1" = log_sig ]; then
+		python3 ~/path/to/git_pretty_signature.py
+	fi
+}
+```
+
