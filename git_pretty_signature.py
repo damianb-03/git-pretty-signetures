@@ -28,12 +28,10 @@ class BColors:
 
 
 # count signatures types (e.g. good/bad/...) if check_mode then will exit at first problem,
-# encoding current system encoding
-# pager - is the pipe to some pager e.g. to the "less" process
+# pager - is the pipe to pager e.g. to the "less" process
 def totag_stats(pager, encoding, check_mode=False):
 	mainloop_count = 0
-	ch = 't'  # should we quit now? (maybe not needed now with the ls?)
-	# count
+	ch = 't'  # should we quit now?	# count
 	G_totag = 0  # good
 	U_totag = 0  # untrust
 	B_totag = 0  # bad
@@ -111,9 +109,8 @@ def totag_stats(pager, encoding, check_mode=False):
 					if check_mode:
 						exit(1)
 
-			col_coms = BColors.OKGREEN  # default colour to use if all ok
+			col_coms = BColors.OKGREEN  # default colour to use
 
-			# commits checking
 			# if any problems:
 			if U_totag:
 				col_coms = BColors.OKBLUE
@@ -146,7 +143,6 @@ def totag_stats(pager, encoding, check_mode=False):
 				info_ft = BColors.OKBLUE + "NOTICE: No tag found in this repository\n"
 
 			#info_head = "\n\n\nWarning: not all git system calls are fully escaped yet."            \
-			#			+ "Do not use on importantproduction accounts yet\n\n"
 
 			info_str = info_head                                    \
 						+ col_coms + str(G_totag) + ": GOOD\n"      \
@@ -159,7 +155,7 @@ def totag_stats(pager, encoding, check_mode=False):
 		mainloop_count += 1
 
 
-# Check if string could contain regex expression
+# Check if string contain regex expression
 def is_string_safe(string):
 	try:
 		without_regex = re.escape(string)
@@ -274,9 +270,6 @@ if __name__ == "__main__":
 				# no detailed info
 				try:
 					tag_verbouse = check_output(tag_verbouse_com.split(), stderr=STDOUT, universal_newlines=True)
-							#
-							#									shell=True,
-							#					timeout=3,
 
 				except CalledProcessError as err:
 					tag_verbouse = "short tag - no detailed information\n"
@@ -309,9 +302,9 @@ if __name__ == "__main__":
 			elif sig_stat == 'N':
 				tag_table = tag_table.replace('gpg', '%C(red)SIGNATURE - FAIL\n%C(reverse yellow)=%C(reset) gpg', 1)
 				com += tag_table.replace('gpg:', '%C(red)gpg:')
-				com += '%C(red reverse)! !!! ! WARNING ! !!! !\n' 		\
-					+ '%C(red)! SIGNATURE - FAILURE !\n' 				\
-					+ '%C(red reverse)! !!! ! WARNING ! !!! !\n' 		\
+				com += '%C(red reverse)! !!! ! WARNING ! !!! !\n'		\
+					+ '%C(red)! SIGNATURE - FAILURE !\n'			\
+					+ '%C(red reverse)! !!! ! WARNING ! !!! !\n'		\
 					+ '%C(red)'
 
 				sig_info = sig_info.replace('\n', '\n%C(red)')[1:-1]
